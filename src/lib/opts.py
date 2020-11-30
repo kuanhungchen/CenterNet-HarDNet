@@ -12,7 +12,7 @@ class opts(object):
     # basic experiment setting
     self.parser.add_argument('task', default='ctdet',
                              help='ctdet | ddd | multi_pose | exdet')
-    self.parser.add_argument('--dataset', default='coco',
+    self.parser.add_argument('--dataset', default='fisheye_hp',
                              help='coco | kitti | coco_hp | pascal')
     self.parser.add_argument('--exp_id', default='default')
     self.parser.add_argument('--test', action='store_true')
@@ -34,6 +34,11 @@ class opts(object):
                                   'Reloaded the optimizer parameter and '
                                   'set load_model to model_last.pth '
                                   'in the exp dir if load_model is empty.') 
+    
+    self.parser.add_argument('--load_training_annotations', default='',
+                             help='path to traning data annotations')
+    self.parser.add_argument('--load_val_annotations', default='',
+                             help='path to val data annotations')
 
     # system
     self.parser.add_argument('--gpus', default='0', 
