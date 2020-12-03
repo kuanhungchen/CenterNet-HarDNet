@@ -22,7 +22,27 @@ class Debugger(object):
       self.colors = self.colors.reshape(-1)[::-1].reshape(len(colors), 1, 1, 3)
       self.colors = np.clip(self.colors, 0., 0.6 * 255).astype(np.uint8)
     self.dim_scale = 1
-    if dataset == 'coco_hp':
+    if dataset == 'coco_hp' or dataset == 'fisheye_hp' or dataset == 'virtual_fisheye_hp' or dataset == 'test_fisheye_hp':
+      self.names = ['p']
+      self.num_class = 1
+      self.num_joints = 17
+      self.edges = [[0, 1], [0, 2], [1, 3], [2, 4],
+                    [3, 5], [4, 6], [5, 6],
+                    [5, 7], [7, 9], [6, 8], [8, 10],
+                    [5, 11], [6, 12], [11, 12],
+                    [11, 13], [13, 15], [12, 14], [14, 16]]
+
+      self.ec = [(255, 0, 0), (0, 0, 255), (255, 0, 0), (0, 0, 255), 
+                 (255, 0, 0), (0, 0, 255), (255, 0, 255),
+                 (255, 0, 0), (255, 0, 0), (0, 0, 255), (0, 0, 255),
+                 (255, 0, 0), (0, 0, 255), (255, 0, 255),
+                 (255, 0, 0), (255, 0, 0), (0, 0, 255), (0, 0, 255)]
+      self.colors_hp = [(255, 0, 255), (255, 0, 0), (0, 0, 255), 
+        (255, 0, 0), (0, 0, 255), (255, 0, 0), (0, 0, 255),
+        (255, 0, 0), (0, 0, 255), (255, 0, 0), (0, 0, 255),
+        (255, 0, 0), (0, 0, 255), (255, 0, 0), (0, 0, 255),
+        (255, 0, 0), (0, 0, 255)]
+    elif dataset == 'coco_hp':
       self.names = ['p']
       self.num_class = 1
       self.num_joints = 17

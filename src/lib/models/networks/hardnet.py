@@ -302,6 +302,7 @@ class HarDBlock_v2(nn.Module):
 class HarDNetBase(nn.Module):
     def __init__(self, arch, depth_wise=False):
         super().__init__()
+        arch = 68 if arch not in [68, 85] else arch
         if arch == 85:
           first_ch  = [48, 96]
           second_kernel = 3
