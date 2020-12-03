@@ -49,7 +49,7 @@ class COCO(data.Dataset):
       'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
       'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
       'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
-      'scissors', 'teddy bear', 'hair drier', 'toothbrush']
+      'scissors', 'teddy bear', 'hair drier', 'toothbrush']  # total: 81
     self._valid_ids = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 
       14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 
@@ -58,7 +58,7 @@ class COCO(data.Dataset):
       48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 
       58, 59, 60, 61, 62, 63, 64, 65, 67, 70, 
       72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 
-      82, 84, 85, 86, 87, 88, 89, 90]
+      82, 84, 85, 86, 87, 88, 89, 90]  # total: 80
     self.cat_ids = {v: i for i, v in enumerate(self._valid_ids)}
     self.voc_color = [(v // 32 * 64 + 64, (v // 8) % 4 * 64, v % 8 * 32) \
                       for v in range(1, self.num_classes + 1)]

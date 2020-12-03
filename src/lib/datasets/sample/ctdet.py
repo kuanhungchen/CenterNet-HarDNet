@@ -101,21 +101,22 @@ class CTDetDataset(data.Dataset):
     for k in range(num_objs):
       ann = anns[k]
       bbox = self._coco_box_to_bbox(ann['bbox'])
-      cls_id = int(self.cat_ids[ann['category_id']])
+      cls_id = int(self.cat_ids[int(ann['category_id'])])
       if flipped:
           bbox[[0, 2]] = width - bbox[[2, 0]]
       bbox[:2] = affine_transform(bbox[:2], trans_input)
       bbox[2:] = affine_transform(bbox[2:], trans_input)
-      segm  = ann['segmentation']
+      # segm  = ann['segmentation']
 
-      # Create bbox from the visible part of objects through segmenation mask
-      m = self.coco.annToMask(ann)
-      bbox2 = mask2box(m, trans_input, border_xy, border_idx, 
-                       flipped, width, height, crop)
+      # # Create bbox from the visible part of objects through segmenation mask
+      # m = self.coco.annToMask(ann)
+      # bbox2 = mask2box(m, trans_input, border_xy, border_idx, 
+                       # flipped, width, height, crop)
 
-      if rot_en:
-        bbox = bbox2.astype(np.float32)
-      ann_list.append([bbox, cls_id, bbox2])
+      # if rot_en:
+        # bbox = bbox2.astype(np.float32)
+      # ann_list.append([bbox, cls_id, bbox2])
+      ann_list.append([bbox, cls_id])
       
       #end of objs loop
     meta = (c, s)
@@ -133,6 +134,7 @@ class CTDetDataset(data.Dataset):
     ann_ids = self.coco.getAnnIds(imgIds=[img_id])
     
     anns = self.coco.loadAnns(ids=ann_ids)
+    print(img_path, anns)
     img = cv2.imread(img_path)
     
     return self.img_transform(img, anns, flip_en=flip_en, scale_lv=scale_lv, out_shift=out_shift, crop=crop)
@@ -179,21 +181,22 @@ class CTDetDataset(data.Dataset):
     # a significant boundary of objects
     #inp, ann_list, output_w, output_h, meta = self.mosaic_mix( index )
     
-    if False: # Augmnetation visualization
+    if True: # Augmnetation visualization
       img = inp.transpose(1, 2, 0)
       img = (img*self.std + self.mean)*255
       for an in ann_list:
-        bbox, cls_id, bbox2 = an
+        # bbox, cls_id, bbox2 = an
+        bbox, cls_id = an
         bbox = bbox.astype(np.int32)
-        bbox2 = bbox2.astype(np.int32)
+        # bbox2 = bbox2.astype(np.int32)
         bbox[[0, 2]] = np.clip(bbox[[0, 2]], 0, img.shape[1])
         bbox[[1, 3]] = np.clip(bbox[[1, 3]], 0, img.shape[0])
-        bbox2[[0, 2]] = np.clip(bbox2[[0, 2]], 0, img.shape[1])
-        bbox2[[1, 3]] = np.clip(bbox2[[1, 3]], 0, img.shape[0])
+        # bbox2[[0, 2]] = np.clip(bbox2[[0, 2]], 0, img.shape[1])
+        # bbox2[[1, 3]] = np.clip(bbox2[[1, 3]], 0, img.shape[0])
         if bbox[2] - bbox[0] > 0 and bbox[3] - bbox[1] > 0:
           cv2.rectangle(img, (bbox[0],bbox[1]), (bbox[2],bbox[3]), (255,0,0), 3)
-        if bbox2.shape[0] > 0:
-          cv2.rectangle(img, (bbox2[0],bbox2[1]), (bbox2[2],bbox2[3]), (0,255,0), 2)
+        # if bbox2.shape[0] > 0:
+          # cv2.rectangle(img, (bbox2[0],bbox2[1]), (bbox2[2],bbox2[3]), (0,255,0), 2)
       cv2.imwrite('temp_%d.jpg'%(index),img)
     
     num_objs = min(len(ann_list), self.max_objs)
@@ -217,21 +220,22 @@ class CTDetDataset(data.Dataset):
     bgs = np.concatenate([xs,ys], axis=1)
     
     for k in range(num_objs):
-      bbox, cls_id, bbox2 = ann_list[k]
+      # bbox, cls_id, bbox2 = ann_list[k]
+      bbox, cls_id = ann_list[k]
       
       bbox /= self.opt.down_ratio
-      bbox2 /= self.opt.down_ratio
+      # bbox2 /= self.opt.down_ratio
 
       oh, ow = bbox[3] - bbox[1], bbox[2] - bbox[0]
       bbox[[0, 2]] = np.clip(bbox[[0, 2]], 0, output_w)
       bbox[[1, 3]] = np.clip(bbox[[1, 3]], 0, output_h)
       h, w = bbox[3] - bbox[1], bbox[2] - bbox[0]
       
-      if (h/(oh+0.01) < 0.9 or  w/(ow+0.01) < 0.9) and bbox2.shape[0] > 0:
-        bbox = bbox2
-        bbox[[0, 2]] = np.clip(bbox[[0, 2]], 0, output_w)
-        bbox[[1, 3]] = np.clip(bbox[[1, 3]], 0, output_h)
-        h, w = bbox[3] - bbox[1], bbox[2] - bbox[0]
+      # if (h/(oh+0.01) < 0.9 or  w/(ow+0.01) < 0.9) and bbox2.shape[0] > 0:
+        # bbox = bbox2
+        # bbox[[0, 2]] = np.clip(bbox[[0, 2]], 0, output_w)
+        # bbox[[1, 3]] = np.clip(bbox[[1, 3]], 0, output_h)
+        # h, w = bbox[3] - bbox[1], bbox[2] - bbox[0]
       #get center of box
       ct = np.array(
           [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=np.float32)
